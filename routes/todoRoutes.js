@@ -39,4 +39,57 @@ router.get("/", authMiddleware, getTodos);
  */
 router.post("/", authMiddleware, addTodo);
 
+/**
+ * @swagger
+ * /api/todos/{id}:
+ *   put:
+ *     summary: Update a todo by ID
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the todo to update
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               title:
+ *                 type: string
+ *               description:
+ *                 type: string
+ *               completed:
+ *                 type: boolean
+ *     responses:
+ *       200:
+ *         description: Successfully updated the todo
+ */
+router.put("/:id", authMiddleware, updateTodo);
+
+/**
+ * @swagger
+ * /api/todos/{id}:
+ *   delete:
+ *     summary: Delete a todo by ID
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: The ID of the todo to delete
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Successfully deleted the todo
+ */
+router.delete("/:id", authMiddleware, deleteTodo);
+
 module.exports = router;

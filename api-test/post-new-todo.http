@@ -1,0 +1,8 @@
+POST http://localhost:3001/api/todos
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+    "title": "test-todo 1",
+    "description": "created by REST extension"
+}

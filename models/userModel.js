@@ -9,7 +9,7 @@ async function createUser(name, email, hashedPassword) {
 }
 
 // Find user by email
-async function findUserByEmail(email) {
+async function getUserByEmail(email) {
     const result = await db.query("SELECT * FROM users WHERE email = $1", [email]);
     return result.rows[0];
 }
@@ -20,4 +20,4 @@ async function findUserById(id) {
     return result.rows[0];
 }
 
-module.exports = { createUser, findUserByEmail, findUserById };
+module.exports = { createUser, getUserByEmail, findUserById };

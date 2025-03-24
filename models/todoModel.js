@@ -21,7 +21,7 @@ async function getTodoById(todoId, userId) {
 }
 
 // Update a todo
-async function updateTodo(todoId, userId, title, description, isCompleted) {
+async function updateTodoModel(todoId, userId, title, description, isCompleted) {
     return db.query(
         "UPDATE todos SET title = $1, description = $2, is_completed = $3 WHERE id = $4 AND user_id = $5 RETURNING *",
         [title, description, isCompleted, todoId, userId]
@@ -29,8 +29,8 @@ async function updateTodo(todoId, userId, title, description, isCompleted) {
 }
 
 // Delete a todo
-async function deleteTodo(todoId, userId) {
+async function deleteTodoModel(todoId, userId) {
     return db.query("DELETE FROM todos WHERE id = $1 AND user_id = $2 RETURNING *", [todoId, userId]);
 }
 
-module.exports = { createTodo, getTodosByUserId, getTodoById, updateTodo, deleteTodo };
+module.exports = { createTodo, getTodosByUserId, getTodoById, updateTodoModel, deleteTodoModel };

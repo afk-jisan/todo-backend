@@ -1,4 +1,4 @@
-const { createTodo, getTodosByUserId, getTodoById, updateTodo, deleteTodo } = require("../models/todoModel");
+const { createTodo, getTodosByUserId, getTodoById, updateTodoModel, deleteTodoModel } = require("../models/todoModel");
 
 async function getTodos(req, res) {
     try {
@@ -23,12 +23,13 @@ async function addTodo(req, res) {
     }
 }
 
-async function updateTodoItem(req, res) {
+async function updateTodo(req, res) {
     const { title, description, is_completed } = req.body;
     const { id } = req.params;
 
     try {
-        const updatedTodo = await updateTodo(id, req.user.id, title, description, is_completed);
+        // Use the renamed updateTodoModel function from the model
+        const updatedTodo = await updateTodoModel(id, req.user.id, title, description, is_completed);
         if (!updatedTodo.rows.length) return res.status(404).json({ message: "Todo not found" });
 
         res.json(updatedTodo.rows[0]);
@@ -38,11 +39,12 @@ async function updateTodoItem(req, res) {
     }
 }
 
-async function deleteTodoItem(req, res) {
+async function deleteTodo(req, res) {
     const { id } = req.params;
 
     try {
-        const deletedTodo = await deleteTodo(id, req.user.id);
+        // Use the renamed deleteTodoModel function from the model
+        const deletedTodo = await deleteTodoModel(id, req.user.id);
         if (!deletedTodo.rows.length) return res.status(404).json({ message: "Todo not found" });
 
         res.json(deletedTodo.rows[0]);
@@ -52,4 +54,4 @@ async function deleteTodoItem(req, res) {
     }
 }
 
-module.exports = { getTodos, addTodo, updateTodoItem, deleteTodoItem };
+module.exports = { getTodos, addTodo, updateTodo, deleteTodo };
