@@ -11,9 +11,16 @@ const swaggerUi = require("swagger-ui-express");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+const cors = require("cors");
+
+
+
 // Middleware
 app.use(express.json());
 app.use(morgan("dev"));
+app.use(cors());  // Enabled CORS for all origins
+
+
 
 // Swagger setup
 const swaggerOptions = {
@@ -24,7 +31,7 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "API for managing todos with authentication"
         },
-        servers: [{ url: "http://localhost:3000" }]
+        servers: [{ url: "todo-backend-livid.vercel.app" }]
     },
     apis: ["./routes/*.js"]
 };
