@@ -1,6 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
 require("dotenv").config();
+const path = require("path");
 
 const todoRoutes = require("./routes/todoRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -10,34 +11,80 @@ const swaggerUi = require("swagger-ui-express");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 const cors = require("cors");
-
-
 
 // Middleware
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors());  // Enabled CORS for all origins
+app.use(cors());
 
 
 
-// Swagger setup
-const swaggerOptions = {
+// Dynamically get URL based on environment
+const getServerUrl = () => {
+    // In production, use the explicitly set PRODUCTION_URL
+    if (process.env.NODE_ENV === 'production') {
+      return process.env.PRODUCTION_URL;
+    }
+    // In development, use localhost with the current port
+    return `http://localhost:${PORT}`;
+  };
+
+
+  
+// Swagger setup - only in development or if explicitly enabled
+if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER === 'true') {
+  const swaggerOptions = {
     definition: {
-        openapi: "3.0.0",
-        info: {
-            title: "Todo API",
-            version: "1.0.0",
-            description: "API for managing todos with authentication"
-        },
-        servers: [{ url: "" }]
+      openapi: "3.0.0",
+      info: {
+        title: "Todo API",
+        version: "1.0.0",
+        description: process.env.NODE_ENV === 'production' 
+          ? "PRODUCTION API - Use with caution" 
+          : "Development API Documentation"
+      },
+      servers: [{ 
+        url: getServerUrl(),
+        description: process.env.NODE_ENV === 'production' 
+          ? 'Production server' 
+          : 'Development server'
+      }],
+      components: {
+        securitySchemes: {
+          bearerAuth: {
+            type: "http",
+            scheme: "bearer",
+            bearerFormat: "JWT"
+          }
+        }
+      },
+      security: [{
+        bearerAuth: []
+      }]
     },
     apis: ["./routes/*.js"]
-};
+  };
 
-const swaggerDocs = swaggerJsDoc(swaggerOptions);
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+  const swaggerDocs = swaggerJsDoc(swaggerOptions);
+  
+  // Serve Swagger UI with proper assets
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
+    customSiteTitle: "Todo API Documentation",
+    explorer: true,
+    swaggerOptions: {
+      persistAuthorization: true
+    }
+  }));
+
+  // Serve Swagger JSON
+  app.get('/api-docs.json', (req, res) => {
+    res.setHeader('Content-Type', 'application/json');
+    res.send(swaggerDocs);
+  });
+
+  console.log(`Swagger UI available at ${getServerUrl()}/api-docs`);
+}
 
 // Routes
 app.use("/api/todos", todoRoutes);
@@ -45,11 +92,16 @@ app.use("/api/auth", authRoutes);
 
 // Root route
 app.get("/", (req, res) => {
-    res.json({ message: "Welcome to the Todo API" });
+  res.json({ 
+    message: "Welcome to the Todo API",
+    docs: process.env.NODE_ENV !== 'production' 
+      ? `Visit /api-docs for documentation` 
+      : 'API documentation disabled in production'
+  });
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+  console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
 });
 
 module.exports = app;

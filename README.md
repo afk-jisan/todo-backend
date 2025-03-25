@@ -38,11 +38,14 @@ DB_HOST=localhost
 DB_PASSWORD=yourpassword
 DB_NAME=postgres
 DB_PORT=6543
+NODE_ENV=ENV
 
 # JWT Authentication
 JWT_SECRET=your_jwt_secret_key
 ```
 Replace `root`, `localhost`, `yourpassword` and `postgres` with your actual PostgreSQL credentials.
+Replace `your_jwt_secret_key` with anything you want.
+Replace `ENV` with development for testing and production for deployment.
 
 ### 4. Set Up Database
 Run migrations and seed data:

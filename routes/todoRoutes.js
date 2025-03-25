@@ -6,11 +6,21 @@ const router = express.Router();
 
 /**
  * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ */
+
+/**
+ * @swagger
  * /api/todos:
  *   get:
  *     summary: Get all todos for the authenticated user
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved todos
@@ -23,13 +33,15 @@ router.get("/", authMiddleware, getTodos);
  *   post:
  *     summary: Add a new todo
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - title
  *             properties:
  *               title:
  *                 type: string
@@ -45,12 +57,11 @@ router.post("/", authMiddleware, addTodo);
  *   put:
  *     summary: Update a todo by ID
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The ID of the todo to update
  *         schema:
  *           type: integer
  *     requestBody:
@@ -78,12 +89,11 @@ router.put("/:id", authMiddleware, updateTodo);
  *   delete:
  *     summary: Delete a todo by ID
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
- *         description: The ID of the todo to delete
  *         schema:
  *           type: integer
  *     responses:
