@@ -1,7 +1,6 @@
 const express = require("express");
 const morgan = require("morgan");
 require("dotenv").config();
-const path = require("path");
 
 const todoRoutes = require("./routes/todoRoutes");
 const authRoutes = require("./routes/authRoutes");
@@ -18,71 +17,55 @@ app.use(express.json());
 app.use(morgan("dev"));
 app.use(cors());
 
-
 // CDN CSS
-const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.1.0/swagger-ui.min.css";
+const CSS_URL = "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.3.0/swagger-ui.min.css";
 
-
-
-// Dynamically get URL based on environment
-const getServerUrl = () => {
-    // In production, use the explicitly set PRODUCTION_URL
-    if (process.env.NODE_ENV === 'production') {
-      return process.env.PRODUCTION_URL;
-    }
-    // In development, use localhost with the current port
-    return `http://localhost:${PORT}`;
-  };
-
-
-
-// Swagger setup 
-if (process.env.NODE_ENV !== 'production' && process.env.ENABLE_SWAGGER === 'true') {
-  const swaggerOptions = {
-    definition: {
-      openapi: "3.0.0",
-      info: {
-        title: "Todo API",
-        version: "1.0.0",
-        description: process.env.NODE_ENV === 'production' 
-          ? "PRODUCTION API - Use with caution" 
-          : "Development API Documentation"
-      },
-      servers: [{ 
-        url: getServerUrl(),
+// Swagger setup
+const options = {
+  definition: {
+    openapi: "3.0.0",
+    info: {
+      title: "Todo API",
+      version: "1.0.0",
+      description: "With user authentication",
+    },
+    servers: [
+      {
+        url: process.env.NODE_ENV === 'production' 
+          ? process.env.PRODUCTION_URL 
+          : `http://localhost:${PORT}`,
         description: process.env.NODE_ENV === 'production' 
           ? 'Production server' 
           : 'Development server'
-      }],
-      components: {
-        securitySchemes: {
-          bearerAuth: {
-            type: "http",
-            scheme: "bearer",
-            bearerFormat: "JWT"
-          }
-        }
       },
-      security: [{
-        bearerAuth: []
-      }]
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT"
+        }
+      }
     },
-    apis: ["./routes/*.js"]
-  };
+    security: [{
+      bearerAuth: []
+    }]
+  },
+  apis: ["./routes/*.js"],
+};
 
-  const swaggerDocs = swaggerJsDoc(swaggerOptions);
-  
-  // Serve Swagger UI with proper assets
-  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs, { customCssUrl: CSS_URL }));
+const specs = swaggerJsDoc(options);
 
-  // Serve Swagger JSON
-  app.get('/api-docs.json', (req, res) => {
-    res.setHeader('Content-Type', 'application/json');
-    res.send(swaggerDocs);
-  });
-
-  console.log(`Swagger UI available at ${getServerUrl()}/api-docs`);
-}
+// Swagger UI
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(specs, { 
+    customCss: '.swagger-ui .opblock .opblock-summary-path-description-wrapper { align-items: center; display: flex; flex-wrap: wrap; gap: 0 10px; padding: 0 10px; width: 100%; }', 
+    customCssUrl: CSS_URL 
+  })
+);
 
 // Routes
 app.use("/api/todos", todoRoutes);
@@ -101,3 +84,8 @@ app.listen(PORT, () => {
 });
 
 module.exports = app;
+
+
+
+
+
