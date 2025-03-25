@@ -31,7 +31,7 @@ const swaggerOptions = {
             version: "1.0.0",
             description: "API for managing todos with authentication"
         },
-        servers: [{ url: "todo-backend-livid.vercel.app" }]
+        servers: [{ url: "" }]
     },
     apis: ["./routes/*.js"]
 };
