@@ -31,9 +31,9 @@ const getServerUrl = () => {
   };
 
 
-  
-// Swagger setup - only in development or if explicitly enabled
-if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER === 'true') {
+
+// Swagger setup 
+if (process.env.NODE_ENV !== 'production' && process.env.ENABLE_SWAGGER === 'true') {
   const swaggerOptions = {
     definition: {
       openapi: "3.0.0",
@@ -71,7 +71,6 @@ if (process.env.NODE_ENV !== 'production' || process.env.ENABLE_SWAGGER === 'tru
   // Serve Swagger UI with proper assets
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs, {
     customSiteTitle: "Todo API Documentation",
-    explorer: true,
     swaggerOptions: {
       persistAuthorization: true
     }
