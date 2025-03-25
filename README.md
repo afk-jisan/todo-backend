@@ -17,8 +17,8 @@ Ensure you have the following installed:
 
 ### 1. Clone the Repository
 ```sh
-git clone https://github.com/your-repo/express-backend.git
-cd express-backend
+git clone https://github.com/afk-jisan/todo-backend.git
+cd todo-backend
 ```
 
 ### 2. Install Dependencies
