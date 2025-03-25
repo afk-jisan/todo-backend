@@ -19,7 +19,7 @@
     "jsonwebtoken": "^9.0.2",
     "pg": "^8.14.1",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.1"
+    "swagger-ui-express": "^4.3.0"
   },
   "devDependencies": {
     "morgan": "^1.10.0",
