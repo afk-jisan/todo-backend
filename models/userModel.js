@@ -20,4 +20,20 @@ async function findUserById(id) {
     return result.rows[0];
 }
 
-module.exports = { createUser, getUserByEmail, findUserById };
+
+
+// Function to store invalidated tokens in the database
+async function invalidateUser(token, expiry) {
+    try {
+        await pool.query("INSERT INTO blacklisted_tokens (token, expires_at) VALUES ($1, $2)", [token, expiry]);
+        return;
+        // return result.rows[0];
+    } catch (err) {
+        console.error("Error invalidating token:", err);
+        throw err;
+    }
+}
+
+
+
+module.exports = { createUser, getUserByEmail, findUserById, invalidateUser };

@@ -1,8 +1,10 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const { createUser, getUserByEmail } = require("../models/userModel");
+const { createUser, getUserByEmail, invalidateUser } = require("../models/userModel");
 
 const SECRET_KEY = process.env.JWT_SECRET;
+const tokenBlacklist = new Set(); // Store invalidated tokens
+
 
 // Register a new user
 async function register(req, res) {
@@ -56,9 +58,24 @@ async function login(req, res) {
     }
 }
 
-//Logout 
+// Logout - Invalidate token by storing it in the database
 async function logout(req, res) {
-    res.json({ message: "Logout successful (remove token on client side)" });
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+        return res.status(400).json({ message: "No token provided" });
+    }
+    
+    try {
+        const decoded = jwt.verify(token, SECRET_KEY);
+        const expiry = new Date(decoded.exp * 1000);
+
+        await invalidateUser(token, expiry);
+
+        res.json({ message: "Logout successful, token invalidated" });
+    } catch (err) {
+        return res.status(401).json({ message: "Invalid token" });
+    }
 }
 
 module.exports = { register, login, logout };

@@ -25,6 +25,15 @@ async function runMigrations() {
       );
     `);
 
+
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS blacklisted_tokens (
+        id SERIAL PRIMARY KEY,
+        token TEXT UNIQUE NOT NULL,
+        expires_at TIMESTAMP NOT NULL
+      );
+    `);
+
     console.log("Migrations completed.");
     process.exit();
   } catch (err) {

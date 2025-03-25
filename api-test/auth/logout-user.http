@@ -1,0 +1,3 @@
+POST http://localhost:3001/api/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJqaXNhbkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MjkyNDk2NSwiZXhwIjoxNzQyOTI4NTY1fQ.RafjX7vtF5qXtqd2FI1JFQawtL3lc-IHwdRgUpiRwU4
+Content-Type: application/json
